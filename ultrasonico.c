@@ -5,36 +5,18 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-uint32_t state = 0;
-uint32_t c_value = 0;
+uint8_t state = 0;
+uint64_t c_value = 0;
 uint32_t interruption_counter = 0;
-
-void init_timer(void){
-    
-     timer_config_t config = {
-        .divider = 16,
-        .counter_dir = TIMER_COUNT_UP,
-        .counter_en = TIMER_PAUSE,
-        .alarm_en = false,
-        .auto_reload = true,
-        .clk_src = TIMER_SRC_CLK_APB
-    }; // default clock source is APB
-    timer_init(TIMER_GROUP_0, TIMER_0, &config);
-
-    /* Timer's counter will initially start from value below.
-       Also, if auto_reload is set, this value will be automatically reload on alarm */
-    timer_set_counter_value(TIMER_GROUP_0, TIMER_0, 0);
-}
 
 void handler_test(void* args) {
     if(state == 0){
-        timer_set_counter_value(TIMER_GROUP_0,TIMER_0,0);
-        c_value = 0;
+        c_value = time_reference_get_current_time_us();
         state = 1;
-        interruption_counter++;
     } else {
-        timer_get_counter_value(TIMER_GROUP_0,TIMER_0,&c_value);
+        c_value = time_reference_get_current_time_us() - c_value;
         state = 0;
+        interruption_counter++;
     }
     gpio_set_level(32,state);
 }
@@ -57,8 +39,7 @@ void app_main(void)
 {   uint32_t prev = 0;
     gpio_set_direction(32,GPIO_MODE_OUTPUT);
     init_interrupts();
-    init_timer();
-    timer_start(TIMER_GROUP_0,TIMER_0);
+    time_reference_init();
     while(1){
         vTaskDelay(10 / portTICK_PERIOD_MS);
         if(prev != interruption_counter){
