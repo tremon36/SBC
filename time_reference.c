@@ -19,5 +19,5 @@ void time_reference_init(){
 uint64_t time_reference_get_current_time_us(void){
     uint64_t current_time;
     timer_get_counter_value(TIMER_GROUP_0,TIMER_0,&current_time);
-    return current_time;
+    return current_time / 5;
 }
