@@ -64,7 +64,7 @@ void tof_init(int scl_pin,int sda_pin,int irq_pin) {
     _sda_pin = sda_pin;
     _irq_pin = irq_pin;
     _i2c_master_init();
-      
+
     //INICIALIZAR VALORES DE LOS REGISTROS DE CONTROL COMO DICE DIGILENT
 
     _tof_register_write_byte(0x10,0x04);
@@ -75,7 +75,7 @@ void tof_init(int scl_pin,int sda_pin,int irq_pin) {
     _tof_register_write_byte(0x19,0x22);
     _tof_register_write_byte(0x90,0x0F);
     _tof_register_write_byte(0x91,0xFF);
-    
+
 }
 
 
@@ -129,7 +129,7 @@ uint8_t tof_start_calibration(double actual_distance)
 {
     ESP_LOGI("Starting"," Calibration");
     vTaskDelay(2000/portTICK_PERIOD_MS);
-    
+
     ESP_LOGI("Starting magnitude calibration... You have 5 sec to prepare the device","");
     vTaskDelay(5000 / portTICK_PERIOD_MS);
     CALIB_perform_magnitude_calibration();
@@ -173,7 +173,7 @@ void CALIB_perform_magnitude_calibration()
     _tof_register_read(0x69, &unused, 1);
     CALIB_initiate_calibration_measurement();
 	//waits for IRQ
-    while(gpio_get_level(25) == 1) vTaskDelay(10/portTICK_PERIOD_MS);
+    while(gpio_get_level(_irq_pin) == 1) vTaskDelay(10/portTICK_PERIOD_MS);
     _tof_register_read(0xF6, regs, 3);
     _tof_register_write_byte(0x2C, regs[0]);
     _tof_register_write_byte(0x2D, regs[1]);
@@ -230,7 +230,7 @@ void CALIB_perform_crosstalk_calibration()
         CALIB_initiate_calibration_measurement();
 
 		//waits for IRQ
-        while(gpio_get_level(25) == 1) vTaskDelay(10/portTICK_PERIOD_MS);
+        while(gpio_get_level(_irq_pin) == 1) vTaskDelay(10/portTICK_PERIOD_MS);
 
         _tof_register_read(0xDA, regs, 14);
         double I = _3bytes_to_double(regs[0],regs[1],regs[2]);
@@ -298,7 +298,7 @@ void CALIB_perform_distance_calibration(double actual_dist)
         CALIB_initiate_calibration_measurement();
 
 		//waits for IRQ
-        while(gpio_get_level(25) == 1) vTaskDelay(10/portTICK_PERIOD_MS);
+        while(gpio_get_level(_irq_pin) == 1) vTaskDelay(10/portTICK_PERIOD_MS);
 
         _tof_register_read(0xD8, regs, 2);
         double phase = _2bytes_to_double(regs[0],regs[1]);
