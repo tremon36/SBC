@@ -91,7 +91,7 @@ void tof_init_interrupts(void(*isr_handler)(void*),void* args){
     gpio_isr_handler_add(_irq_pin,isr_handler,args);
 }
 
-void tof_request_read() {
+void tof_request_measurement() {
     uint8_t trash;
     _tof_register_write_byte(0x13,0x7D); // mode single shot
     _tof_register_write_byte(0x60,0x01); // interrupts enabled
@@ -101,11 +101,11 @@ void tof_request_read() {
 
 float tof_get_last_measurement() {
     uint8_t trash,high_value,low_value;
-    uint32_t distance;
-    _tof_register_read(0xD1,&high_value,1);                                             // read distance result
-    _tof_register_read(0xD2,&low_value,1);                                              // read distance result
-    distance = ((((float)high_value) * 256.0f + (float)low_value) / 65536.0f) * 33.31f; //calculate distance
-    _tof_register_read(0x60,&trash,1);                                                  // clear interrupt register
+    float distance;
+    _tof_register_read(0xD1,&high_value,1);                                              // read distance result
+    _tof_register_read(0xD2,&low_value,1);                                               // read distance result
+    distance = ((((float)high_value) * 256.0f + (float)low_value) / 65536.0f) * 33.31f;  //calculate distance
+    _tof_register_read(0x60,&trash,1);                                                   // clear interrupt register
     return distance;
 }
 
