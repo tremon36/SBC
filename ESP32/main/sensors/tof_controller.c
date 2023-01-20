@@ -74,8 +74,8 @@ void set_servo_angle(int angle){
 void main_servo_task(void* args){
     int servo_going_up = 1;
     servo_init();
-    //tof_init(TOF_SCL_PIN,TOF_SDA_PIN,TOF_IRQ_PIN);
-    //tof_init_interrupts(tof_interrupts_handler,NULL);
+    tof_init(TOF_SCL_PIN,TOF_SDA_PIN,TOF_IRQ_PIN);
+    tof_init_interrupts(tof_interrupts_handler,NULL);
     
     for(;;){
         
@@ -91,7 +91,7 @@ void main_servo_task(void* args){
 
         vTaskDelay(pdMS_TO_TICKS(1000 * (0.1f/6.0f)));
 
-        //tof_request_measurement();
+        tof_request_measurement();
 
         // period of the task
 
