@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="@color/selected_button">
+
+
+    <item android:drawable="@drawable/custom_round_button_blue" />
+</ripple>
+
