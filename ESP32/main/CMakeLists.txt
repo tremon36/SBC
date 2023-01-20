@@ -1,0 +1,2 @@
+idf_component_register(SRCS "main.c" "./sensors/motors_controller.c" "./utilities/time_reference.c" "./sensors/ultrasonico_controller.c" "./sensors/tof.c" "./sensors/tof_controller.c" "./networks/mqtt_publisher.c" "./networks/tcp_client.c"
+                    INCLUDE_DIRS "." "./data_structures" "./sensors" "./utilities" "./networks")
